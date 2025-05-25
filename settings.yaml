@@ -1,0 +1,38 @@
+# This file contains the settings for the scripts in the project
+model: "ollama" # the base model to use, options are ollama or openai
+opennai_model: "gpt-4o-mini" # the model to use for the generation if model is set to openai
+## TODO: determine if an API key is needed here or if the code is getting it from the .env
+ollama_model: "llama3.2:3b" # the model to use for the generation
+ollama_url: "http://localhost:11434" # the URL of the Ollama server with NO trailing slash
+with_date: true # boolean if the title should include the date as a prefix
+# the AI prompt for the generation
+# ToDo: Improve the prompt, this one sucks.
+prompt:
+  # the main prompt for the AI
+  main: |
+    - Begin the text with: BEGIN: """
+    - End the text with: """ END:
+    - Generate a concise, informative title in the corresponding language
+    - Include the sender or author (max 20 characters) in the title
+    - Remove all stop words from the title
+    - Ensure the title is unique and free of duplicate information
+    - Keep the title under 127 characters
+    - Avoid using asterisks in the title
+    - Optimize the title for readability
+    - Check the title against filename conventions
+    - Re-read and further optimize the title if necessary
+  # the prompt part will be appended if the date should be included in the title using with_date: true
+  with_date: |
+    * analyze the text and find the date of the document
+    * add the found date in form YYYY-MM-DD as a prefix to the document title
+    * if there is no date information in the document, use {current_date}
+    * use the form: date sender title
+  # the prompt part will be appended if the date should not be included in the title using with_date: false
+  no_date: |
+    * use the form: sender title
+  # the prompt before the content of the document will be appended
+  pre_content: |
+    BEGIN: """
+  # the prompt after the content of the document will be appended
+  post_content: |  
+    """ END:

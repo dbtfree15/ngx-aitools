@@ -1,9 +1,31 @@
 #TODO: update the settings and instructions based on changes, including the concept of a placeholder .env file
 
-# Rename titles in Paperless NGX using OpenAI
+# Do more in Paperless NGX using LLMs
 
-This is a Paperless NGX post consumption script.More information under this link : https://docs.paperless-ngx.com/advanced_usage/#consume-hooks.
-You need an OpenAI API account to run it.
+This project is based on ngx-renamer by ###. I really enjoyed their work, but I had a real problem with sending my medical and tax documents, for instance, to OpenAI, and would much prefer to either send it to my own instance in the cloud or to a local instance of Ollama. 
+
+I made updates to ngx-renamer to allow setting of preferred model, OpenAI or Ollama. Currently no support for other API integrations, but may add in the guture.
+
+As I did, I realized there are other opportunities, so I am calling this **ngx-aitools** because I am going to try to add the following soon:
+- Refactor code so that repetitive functions are pulled out in utils, which will help in future
+- Ability to optionally use OpenAI as a backup if Ollama is unreachable
+- Ability to have AI add tags based on content
+- Ability to have AI assign Document Type based on content
+- Ability to have AI add summary of doc in notes section
+- (Maybe, skeptical this will work) Ability to have AI identify Correspondant from the content OR create a new one if it doesn't exist.
+
+For now though, this is just a fork of ngx-renamer. I have mostly done the following:
+- Add the ability to use Ollama
+- Add the ability to set Ollama or OpenAI as the default LLM
+- Added a test for testing based on an existing document
+- Some fixes to instructions on how to set the URL
+- Added place holder .env file
+- Updated the query to get better results
+
+# Renaming titles in Paperless NGX using Ollama or OpenAI
+
+This is a Paperless NGX post consumption script. For more information on post consumption, see : https://docs.paperless-ngx.com/advanced_usage/#consume-hooks.
+You either need an instance of Ollama that is accessible by your Paperless instance, or an OpenAI account, with paid API access.
 
 ## Installation in Paperless NGX
 
@@ -22,6 +44,8 @@ user@host:~/paperless$ tree . -L 2
 └── ngx-renamer
     ├── change_title.py
     ├── modules
+    ├── LICENSE
+    ├── placeholder.env
     ├── post_consume_script.sh
     ├── README.md
     ├── requirements.txt
@@ -29,21 +53,12 @@ user@host:~/paperless$ tree . -L 2
     ├── setup_venv.sh
     ├── test_pdf.py
     ├── test_title.py
-    ├── title_finder.py
+    ├── test_document.py
 ```
 
-**Create a `.env` file in the `ngx-renamer` directory and put your credentials in:**
+**Edit placeholder.env and rename to `.env` in the `ngx-renamer` directory and put your credentials in:**
 
-```bash
-# you can create an openai key under https://platform.openai.com/settings/organization/api-keys
-OPENAI_API_KEY=<your_key_from_openai>
-# you find the api key in your paperless user proofile
-PAPERLESS_NGX_API_KEY=<your_paperless_api_token>
-# the url of your paperless installation
-# it must be accesible from the container
-# http://<container_name>:<port> e.g. http://paperless-webserver-1:8000
-PAPERLESS_NGX_URL=http://your-domain.whatever:port
-```
+Follow the instructions in the file and replace the values with your credentials and URLs for Paperless as well as your OpenAI API key and other specified information.
 
 **Open the `docker-compose.yml` file and add the directory `ngx-renamer` as internal directory to the webserver container and `post_consume_script.sh` as post consumption script:**
 
@@ -130,7 +145,36 @@ user@host:~/paperless$ docker compose exec -u paperless webserver /usr/src/ngx-r
 
 ## The settings
 
-You may edit `settings.yaml` to edit the prompt and with that the results.
+**Choosing a model**
+First, you need to decide if you want to use OpenAI or Ollama. You can control this by setting the `model` value. You have two options, `ollama` or `openAi` (case sensitive).
+Example:
+```yaml
+model: "ollama" # the base model to use, options are ollama or openai
+```
+
+**Model settings**
+You will next need to set the `openai_model` and/or `ollama_model`  version. For example, if you are using Ollama, maybe you want to use `llama3.2:3b`.
+
+```yaml
+opennai_model: "gpt-4o-mini" # the model to use for the generation if model is set to openai
+ollama_model: "llama3.2:3b" # the model to use for the generation
+```
+
+Please note that if you are using Ollama, some models may have unexpected results that will break this integration. For instance, Qwen3 is a really great model, with its thinking capability. However, it always returns `<think>``</think>` tags, even if you disable thinking in your prompt. So you would need to modify the code to strip these out (I did not bother with this, might look at it later, because it is a neat model)
+
+**If you are using Ollama, set the URL**
+You will need to set the URL to Ollama. Note that this is to the `serve` function and not the web ui, if you are using Open WebUI or something similar. These are different ports, and Ollama is most likely running on 11434, but check your install
+
+```yaml
+ollama_url: "http://localhost:11434" # the URL of the Ollama server with NO trailing slash
+```
+
+**A few notes about running Ollama**
+You only need the base URL to the API, the code includes the \api\ and other parts of the call, so just include the URL/port
+
+If you are doing reverse proxy or have your Ollama on a separate server with a distinct URL that redirects the URL to the right port, you may not need the port number.
+
+If you are having trouble connecting to Ollama on a local machine OTHER than your Paperless-ngx machine, you might need to `serve` Ollama so that it is not just running on localhost but is open to any incoming traffic (also check your firewall/portforwarding). Learn more here: [Learn more about exposing Ollama API](https://aident.ai/blog/how-to-expose-ollama-service-api-to-network)
 
 **Test the different models at OpenAI:**
 ```yaml
@@ -140,7 +184,8 @@ openai_model: "gpt-4o-mini" # the model to use for the generation
 ```yaml
 with_date: true # boolean if the title should the date as a prefix
 ```
-**Play with the prompt - it is a work in progress and tested in Englsh and German:**
+**Play with the prompt - it is a work in progress and tested in Englsh only:**
+You may edit `settings.yaml` to edit the prompt and with that the results. I have found good success with the version of the prompt I have here, but you may want to change things, and different models may react differently.
 ```yaml
 prompt:
   # the main prompt for the AI

@@ -190,20 +190,24 @@ You may edit `settings.yaml` to edit the prompt and with that the results. I hav
 prompt:
   # the main prompt for the AI
   main: |
-    * this is a text from a PDF document generated with OCR
-    * begin the text with the following line: ### begin of text ###
-    * end the text with the following line: ### end of text ###
-    * generate a title for that given text in the corresponding language
-    * add the sender or author of the document with a maximum of 20 characters to the  title 
-    * remove all stop words from the title
-    * the  title must be in a Concise and Informative style
-    * remove duplicate information
-    * the length must be smaller that 200 characters
-    * do not use asterisks in the title
-    * do not use currencies in the result
-    * optimize it for readability
-    * check the result for filename conventions
-    * re-read the generated  title and optimize it
+    - The following is the content from a PDF document generated with OCR. This PDF needs a new file name.
+    - The file's content begins with: ###FILE CONTENT BEGIN###
+    - The file's content ends with: ###FILE CONTENT END###
+    - Based on the content, generate a concise, informative title that would help a user understand what is in the file when browsing through a directory.
+    - Try to follow the following naming convention (words in the {} placeholder content should be separated by dashes): {DATE}_{AUTHOR}_{SHORT_TITLE}_{TYPE}
+    -- Where {DATE}" date of creation or receipt, {AUTHOR}: the sender, author or source of the document, {SHORT_TITLE}: short, concise descriptive title, {TYPE}: one or two words describing the type of document it is
+    -- Example: 2025-05-21_Fred-Meyers_Groceries-and-clothes_Receipt
+    - Remove all stop words from the title
+    - Ensure the title is unique and free of duplicate information
+    - Keep the title under 127 characters
+    - Never use punctuation or spaces in the title, other than underscores and dashes
+    - Optimize the title for readability
+    - Check the title against filename conventions
+    - Re-read and further optimize the title if necessary
+    - The filename must have more than just the date
+    - Because this filename may be used in multiple filesystems, avoid special characters, such as slashes, commas, periods, asterisks, etc. that may not work with Linux, Windows or Macos
+    - DO NOT USE COMMAS or PERIODS in the file name
+    Your response should be a single line, no punctuation other than dashes or underscores, no explanation or other information is necessary. The response will be used in the filename directly.
   # the prompt part will be appended if the date should be included in the title using with_date: true
   with_date: |
     * analyze the text and find the date of the document
@@ -215,10 +219,10 @@ prompt:
     * use the form: sender title
   # the prompt before the content of the document will be appended
   pre_content: |
-    ### begin of text ###
+    ###FILE CONTENT BEGIN###
   # the prompt after the content of the document will be appended
   post_content: |  
-    ### end of text ###
+    ###FILE CONTENT END###
 ```
 
 ## Python development and testing

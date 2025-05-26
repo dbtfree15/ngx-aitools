@@ -1,3 +1,11 @@
+# UPDATE (already): Looks like there are some more powerful options, checkout paperless-ai and paperless-gpt
+A user on reddit pointed out that there are some pretty slick projects already out there that I hadn't seen. I am in the process of exploring those, as they seem already more advanced than where I am at. I asuggest you also puruse them here:
+https://github.com/clusterzx/paperless-ai
+https://github.com/icereed/paperless-gpt
+
+I am reviewing these projects before I decide if I continue with this one.
+
+
 # Do more in Paperless NGX using LLMs
 
 This project is based on [**ngx-renamer**](https://github.com/chriskoch/ngx-renamer) by Christian Koch (chriskoch). I really enjoyed their work, but I had a real problem with sending my medical and tax documents, for instance, to OpenAI, and would much prefer to either send it to my own instance in the cloud or to a local instance of Ollama. 

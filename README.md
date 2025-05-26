@@ -1,5 +1,3 @@
-#TODO: update the settings and instructions based on changes, including the concept of a placeholder .env file
-
 # Do more in Paperless NGX using LLMs
 
 This project is based on [**ngx-renamer**](https://github.com/chriskoch/ngx-renamer) by Christian Koch (chriskoch). I really enjoyed their work, but I had a real problem with sending my medical and tax documents, for instance, to OpenAI, and would much prefer to either send it to my own instance in the cloud or to a local instance of Ollama. 

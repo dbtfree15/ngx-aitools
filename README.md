@@ -39,7 +39,7 @@ user@host:~/paperless$ tree . -L 2
 ├── docker-compose.env
 ├── docker-compose.yml
 ├── export
-└── ngx-renamer
+└── ngx-aitools
     ├── change_title.py
     ├── modules
     ├── LICENSE
@@ -54,11 +54,11 @@ user@host:~/paperless$ tree . -L 2
     ├── test_document.py
 ```
 
-**Edit placeholder.env and rename to `.env` in the `ngx-renamer` directory and put your credentials in:**
+**Edit placeholder.env and rename to `.env` in the `ngx-aitools` directory and put your credentials in:**
 
 Follow the instructions in the file and replace the values with your credentials and URLs for Paperless as well as your OpenAI API key and other specified information.
 
-**Open the `docker-compose.yml` file and add the directory `ngx-renamer` as internal directory to the webserver container and `post_consume_script.sh` as post consumption script:**
+**Open the `docker-compose.yml` file and add the directory `ngix-aitools` as internal directory to the webserver container and `post_consume_script.sh` as post consumption script:**
 
 ```bash
   webserver:
@@ -77,7 +77,7 @@ Follow the instructions in the file and replace the values with your credentials
       - ./export:/usr/src/paperless/export
       - /data/paperless/consume:/usr/src/paperless/consume
       # this is the new volume for nxg-renamer - add this
-      - /your/path/to/paperless/ngx-renamer:/usr/src/ngx-renamer
+      - /your/path/to/paperless/ngix-aitools:/usr/src/ngix-aitools
     env_file: docker-compose.env
     environment:
       PAPERLESS_REDIS: redis://broker:6379
@@ -86,7 +86,7 @@ Follow the instructions in the file and replace the values with your credentials
       PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://gotenberg:3000
       PAPERLESS_TIKA_ENDPOINT: http://tika:9998
       # This is the post consumption script call - add this
-      PAPERLESS_POST_CONSUME_SCRIPT: /usr/src/ngx-renamer/post_consume_script.sh
+      PAPERLESS_POST_CONSUME_SCRIPT: /usr/src/ngix-aitools/post_consume_script.sh
 ```
 **Restart your paperless system:**
 ```bash
@@ -112,19 +112,19 @@ user@host:~/paperless$ docker compose up -d
 
 ```bash
 # Change owner to root
-user@host:~/paperless$ sudo chown -R root ngx-renamer/
+user@host:~/paperless$ sudo chown -R root ngix-aitools/
 # Make scripts executable
-user@host:~/paperless$ sudo chmod +x ngx-renamer/setup_venv.sh
-user@host:~/paperless$ sudo chmod +x ngx-renamer/post_consume_script.sh
+user@host:~/paperless$ sudo chmod +x ngix-aitools/setup_venv.sh
+user@host:~/paperless$ sudo chmod +x ngix-aitools/post_consume_script.sh
 # run setup routine
-user@host:~/paperless$ docker compose exec -u paperless webserver /usr/src/ngx-renamer/setup_venv.sh
+user@host:~/paperless$ docker compose exec -u paperless webserver /usr/src/ngix-aitools/setup_venv.sh
 ```
 
 **The result sould look like:**
 
 ```bash
 # Shortened version of the output
-user@khost:~/paperless$ docker compose exec -u paperless webserver /usr/src/ngx-renamer/setup_venv.sh
+user@khost:~/paperless$ docker compose exec -u paperless webserver /usr/src/ngix-aitools/setup_venv.sh
 Setting up virtual environment...
 OK
 ...
@@ -138,7 +138,7 @@ Successfully installed pyyaml-6.0.2
 
 ```bash
 # This script should run with an 404 error.
-user@host:~/paperless$ docker compose exec -u paperless webserver /usr/src/ngx-renamer/post_consume_script.sh
+user@host:~/paperless$ docker compose exec -u paperless webserver /usr/src/ngix-aitools/post_consume_script.sh
 ```
 
 ## The settings

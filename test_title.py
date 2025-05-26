@@ -32,7 +32,7 @@ def initialize_ai(settings, settings_file):
         raise ValueError(f"Unsupported model type: {model}")
 
 def main():
-    settings_file = os.getenv("SETTINGS_FILE", "/usr/src/ngx-renamer/settings.yaml")
+    settings_file = os.getenv("SETTINGS_FILE", "/usr/src/ngx-aitools/settings.yaml")
     settings = load_settings(settings_file)
     if not settings:
         print("Failed to load settings. Exiting.")

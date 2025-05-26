@@ -2,7 +2,7 @@
 
 # Do more in Paperless NGX using LLMs
 
-This project is based on ngx-renamer by ###. I really enjoyed their work, but I had a real problem with sending my medical and tax documents, for instance, to OpenAI, and would much prefer to either send it to my own instance in the cloud or to a local instance of Ollama. 
+This project is based on [**ngx-renamer**](https://github.com/chriskoch/ngx-renamer) by Christian Koch (chriskoch). I really enjoyed their work, but I had a real problem with sending my medical and tax documents, for instance, to OpenAI, and would much prefer to either send it to my own instance in the cloud or to a local instance of Ollama. 
 
 I made updates to ngx-renamer to allow setting of preferred model, OpenAI or Ollama. Currently no support for other API integrations, but may add in the guture.
 
